@@ -1,12 +1,12 @@
 .PHONY: all clean run $(EXE)
 
 OPA ?= opa
-EXE = hello.exe
+EXE = opapp.exe
 
 all: $(EXE)
 
 $(EXE): src/*.opa 
-	$(OPA) src/hello.opa -o $(EXE)
+	$(OPA) src/main.opa -o $(EXE)
 
 run: all
 	./$(EXE) || exit 0 
