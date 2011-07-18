@@ -17,23 +17,27 @@
 ADMIN_ACCOUNT = { twitter="mamewotoko"
                   git="https://mamewotoko@github.com/mamewotoko/opapp.git" }
 
-twitter_div() = 
+tracker_div() =
+              <div><input type="button" value="add" /></div>
+
+twitter_div() =
               <a href="http://twitter.com/{ADMIN_ACCOUNT.twitter}" class="twitter-follow-button" data-show-count="false" data-lang="ja">Follow @{ADMIN_ACCOUNT.twitter}</a><script src="http://platform.twitter.com/widgets.js" type="text/javascript"></script>
 
 day_counter() =
             now = Date.now()
             //TODO: modify time zone!
             deadline = Date.of_human_readable({ year=2011; month={ august }; day=31; h=23; min=59; s=59; ms=0 ; wday={ monday }} )
-            timelimit = Date.between(deadline, now)
+            timelimit = Date.between(now, deadline)
             {now=now; timelimit=timelimit}
 
 page() = 
      tm = day_counter()
-     (<><div>{Date.to_string(tm.now)}</><div>{Duration.to_string(tm.timelimit)} days</>
+     //TODO: ceil days!
+     (<><div>{Date.to_string(tm.now)}</><div>{Duration.in_days(tm.timelimit)} days</>
      Hello world<hr/><address>
      <img src="resource/IMG_0090.JPG" alt="tora - tiger" />Takashi Masuyama: &lt;mamewotoko _AT_ gmail.com&gt; {twitter_div()}
      <div>Powered by Opa. (<a href="http://opalang.org/resources/doc/index.html">API document</a>)</>
-     <div>Git repository: {ADMIN_ACCOUNT.git}</></address></>)
+     <div><a href="{ADMIN_ACCOUNT.git}">Fork me on GitHub!</></></address></>)
 
 server =
         Server.one_page_bundle("Welcome to Opapp", [@static_resource_directory("resource")], [], page)
