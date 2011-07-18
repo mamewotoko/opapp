@@ -44,8 +44,8 @@ send_message(message) =
                do /chatlog[?] <- message
                Network.broadcast(message, room)
 
-broadcast(author) =
-               do send_message({~author; text=Dom.get_value(#entry); loginp={false}})
+broadcast(author, message) =
+               do send_message({~author; text=message; loginp={false}})
                Dom.clear_value(#entry)
 
 broadcast_login(author) =
@@ -57,15 +57,34 @@ broadcast_login(author) =
                do List.iter(user_update, history_list)
                broadcast_login(author)
 
-start() =
-        author = Random.string(8)
+start_main(author) =
+        xhtml_content =
         <>
           <div id=#header><input type="hidden" value={author} id="myname" /><div id=#logo></>
-             <input id=#entry onnewline={_ -> broadcast(author)} />
-             <div class="button" onclick={_ -> broadcast(author)}>Post</>
+             <input id=#entry onnewline={_ -> broadcast(author,Dom.get_value(#entry))} />
+             <div class="button" onclick={_ -> broadcast(author,Dom.get_value(#entry))}>Post</>
           </>
           <div style="border: solid 3px black;" id=#conversation onready={_ -> post_login(author)}></>
           <div id=#footer>...</>
         </>
+        Resource.html("Chat!!", xhtml_content)
 
-server = Server.one_page_server("Chat simple: ", start)
+@server
+rest(author) =
+       match HttpRequest.get_method() with
+       | {some=method} ->
+              match method with
+              | {post} -> //TODO: login check!!
+                     do broadcast(author, HttpRequest.get_body()?"none....")
+                     Resource.raw_response("ok!", "text/plain", {success})
+              | _ -> Resource.raw_status({bad_request})
+              end
+       | _ -> Resource.raw_status({method_not_allowed})
+
+@server
+start(r: Uri.relative) = match r with
+      | {path = ["_rest_" | _] ~query ...} -> rest(List.assoc("author",query)?"ghost")
+      | _ -> start_main(Random.string(8)) //TODO: use given author name!!
+
+server = Server.simple_dispatch(start)
+
