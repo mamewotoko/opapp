@@ -70,20 +70,36 @@ start_main(author) =
         Resource.html("Chat!!", xhtml_content)
 
 @server
-rest(author) =
+rest() =
        match HttpRequest.get_method() with
        | {some=method} ->
               match method with
               | {post} -> //TODO: login check!!
-                     do broadcast(author, HttpRequest.get_body()?"none....")
-                     Resource.raw_response("ok!", "text/plain", {success})
+                  match HttpRequest.get_body() with
+                  | {none} -> Resource.raw_status({bad_request})
+                  | {some=body} ->
+                            match Json.deserialize(body) with
+                            | {none} -> Resource.raw_status({bad_request})
+                            | {some={Record=lst}} ->
+                                  match (List.assoc("author", lst), List.assoc("text", lst)) with
+                                  | ({some={String=author}}, {some={String=text}}) ->
+                                       do broadcast(author, text)
+                                       Resource.raw_response("ok!", "text/plain", {success})
+                                  | _ -> Resource.raw_status({bad_request})
+                                  end
+                            | _ -> Resource.raw_status({bad_request})
+                            end
+                  end
+              | {get} ->
+                     body = List.fold((item, acc -> item.text^"\n"^acc), IntMap.To.val_list(/chatlog), "") 
+                     Resource.raw_response(body, "text/plain", {success})
               | _ -> Resource.raw_status({bad_request})
               end
        | _ -> Resource.raw_status({method_not_allowed})
 
 @server
 start(r: Uri.relative) = match r with
-      | {path = ["_rest_" | _] ~query ...} -> rest(List.assoc("author",query)?"ghost")
+      | {path = ["_rest_" | _] ...} -> rest()
       | _ -> start_main(Random.string(8)) //TODO: use given author name!!
 
 server = Server.simple_dispatch(start)
