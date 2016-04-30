@@ -1,2 +1,6 @@
-server = Server.one_page_server("hello", (-> <>Hello world</>))
+Server.start(Server.http,
+	{ title: "Hello opapp",
+	  page: function() { <h1>Hello world</h1> }
+	  }
+ )
 
