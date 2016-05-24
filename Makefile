@@ -1,6 +1,6 @@
 ########################################
 # USER VARIABLES
-EXE = chat.exe
+EXE = wplayer.exe
 ifdef SystemRoot
 	RUN_CMD = $(EXE)
 else

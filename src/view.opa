@@ -1,5 +1,3 @@
-import stdlib.themes.bootstrap
-
 module View {
   function page_template() {
 
