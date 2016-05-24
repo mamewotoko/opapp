@@ -1,6 +1,5 @@
 opapp: Opa sample application
 =============================
-2011 ver
 
 Build
 -----
@@ -15,6 +14,13 @@ http://localhost:8080/
 Clean
 -----
 make clean
+
+TODO
+----
+* login
+* manage session
+* http request to other site
+* async job
 
 ---
 Takashi Masuyama < mamewotoko@gmail.com >

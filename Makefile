@@ -1,15 +1,31 @@
-.PHONY: all clean run $(EXE)
+########################################
+# USER VARIABLES
+EXE = chat.exe
+ifdef SystemRoot
+	RUN_CMD = $(EXE)
+else
+	RUN_CMD = ./$(EXE)
+endif
 
-OPA ?= opa
-EXE = hello.exe
+PACKNAME =
+SRC =
+PCKDIR = ./plugins/
+PCK =
+PLUGIN =
+PLUGINDIR =
+OTHER_DEPENDS = resources/*
+CONF_FILE = opa.conf
 
-all: $(EXE)
+#Compiler variables
+OPACOMPILER ?= opa
+FLAG = --opx-dir _build --import-package stdlib.database.mongo
+PORT = 8080
 
-$(EXE): src/*.opa 
-	$(OPA) src/hello.opa -o $(EXE)
+RUN_OPT =
 
-run: all
-	./$(EXE) || exit 0 
+default: exe
 
-clean:
-	rm -Rf *.exe _build _tracks *.log **/#*#
+run: exe
+	$(RUN_CMD) $(RUN_OPT) || true
+
+include Makefile.common
