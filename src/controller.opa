@@ -1,14 +1,10 @@
-
-
 module Controller {
-
-// URL dispatcher of your application; add URL handling as needed
+  // URL dispatcher of your application; add URL handling as needed
   dispatcher = {
     parser {
       case (.*) : View.default_page()
     }
   }
-
 }
 
 resources = @static_resource_directory("resources")
@@ -18,20 +14,24 @@ podcast_list = [
         "http://downloads.bbc.co.uk/podcasts/worldservice/tae/rss.xml",
         "http://feeds.wsjonline.com/wsj/podcast_wall_street_journal_this_morning?format=xml",
         "http://learningenglish.voanews.com/podcast/"
-	]
+]
 
-url = Uri.of_string("http://www.nhk.or.jp/rj/podcast/rss/english.xml")
-match (url) {
-  case ~{some}:
-    WebClient.Get.try_get_async(some, function(res) {
-      match(res) {
-        case ~{success}: Log.info("success", success.content)
-        default: Log.info("failed", "failed")
-      }
-    })
-  default:
-   Log.info("parse failed", "parse failed")
+function fetch_podcast(podcast_url){
+  url = Uri.of_string(podcast_url)
+  match (url) {
+    case ~{some}:
+      WebClient.Get.try_get_async(some, function(res) {
+        match(res) {
+          case ~{success}: Log.info("success", success.content)
+          default: Log.info("failed", "failed")
+        }
+      })
+    default:
+      Log.info("parse failed", "parse failed")
+  }
 }
+
+List.iter(fetch_podcast, podcast_list)
 
 Server.start(Server.http, [
   { register:
