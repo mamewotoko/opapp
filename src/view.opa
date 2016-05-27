@@ -1,6 +1,5 @@
 module View {
   function page_template() {
-
     <div>
     <audio id=audio controls></audio>
     <ul id=container class=list-group>
