@@ -3,23 +3,22 @@ opapp: Opa sample application
 
 Build
 -----
-```
-make
-+++
+
+        make
 
 Run
 ----
-```
-make run
-```
+
+        make run
+
 then, start web browser and browse
 http://localhost:8080/
 
 Clean
 -----
-```
-make clean
-```
+
+        make clean
+
 
 TODO
 ----
