@@ -28,6 +28,11 @@ TODO
 * login
   * manage session
 
+References
+----------
+
+* [The Opa Language](http://opalang.org/)
+
 ---
 Takashi Masuyama < mamewotoko@gmail.com >
 http://mamewo.ddo.jp/
